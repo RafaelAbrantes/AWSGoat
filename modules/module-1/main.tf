@@ -27,6 +27,10 @@ resource "aws_lambda_function" "react_lambda_app" {
   runtime       = "nodejs18.x"
   role          = aws_iam_role.blog_app_lambda.arn
   depends_on    = [data.archive_file.lambda_zip, null_resource.file_replacement_lambda_react]
+  tags = {
+    git_repo  = "AWSGoat"
+    yor_trace = "ecc22be9-333a-44b6-a54e-f6e75f9816ec"
+  }
 }
 
 
@@ -50,6 +54,10 @@ resource "aws_iam_role" "blog_app_lambda" {
   ]
 }
 EOF
+  tags = {
+    git_repo  = "AWSGoat"
+    yor_trace = "bdb95c89-13ac-4817-ba15-c138f1bd58e2"
+  }
 }
 
 
@@ -69,6 +77,10 @@ resource "aws_api_gateway_rest_api" "api" {
     types = [
       "REGIONAL"
     ]
+  }
+  tags = {
+    git_repo  = "AWSGoat"
+    yor_trace = "dc71d934-ff28-4a69-b9b8-3f33eb7e32f1"
   }
 }
 
@@ -161,6 +173,10 @@ resource "aws_api_gateway_stage" "api" {
   stage_name    = "prod"
   rest_api_id   = aws_api_gateway_rest_api.api.id
   deployment_id = aws_api_gateway_deployment.api.id
+  tags = {
+    git_repo  = "AWSGoat"
+    yor_trace = "2b70bca3-3bfc-48be-941c-fa439a84f922"
+  }
 }
 
 
@@ -176,6 +192,10 @@ resource "aws_api_gateway_rest_api" "apiLambda_ba" {
     types = [
       "REGIONAL"
     ]
+  }
+  tags = {
+    git_repo  = "AWSGoat"
+    yor_trace = "47cfc09f-c350-4df9-a99c-4cdd649447ca"
   }
 }
 
@@ -3094,6 +3114,10 @@ resource "aws_lambda_function" "lambda_ba_data" {
       JWT_SECRET = "T2BYL6#]zc>Byuzu"
     }
   }
+  tags = {
+    git_repo  = "AWSGoat"
+    yor_trace = "74ac28a9-9e81-4fe8-9dd7-88ea78d0dd30"
+  }
 }
 
 
@@ -3117,6 +3141,10 @@ resource "aws_iam_role" "blog_app_lambda_python" {
   ]
 }
 EOF
+  tags = {
+    git_repo  = "AWSGoat"
+    yor_trace = "17073072-23a0-49af-aa94-c574b1631d14"
+  }
 }
 
 
@@ -3156,6 +3184,10 @@ resource "aws_iam_policy" "lambda_data_policies" {
     ],
     "Version" : "2012-10-17"
   })
+  tags = {
+    git_repo  = "AWSGoat"
+    yor_trace = "f2066ad9-ffbc-47eb-861c-62301013a521"
+  }
 }
 
 
@@ -3197,6 +3229,8 @@ resource "aws_s3_bucket" "bucket_upload" {
   tags = {
     Name        = "Production bucket"
     Environment = "Prod"
+    git_repo    = "AWSGoat"
+    yor_trace   = "91d41972-f6f0-4b13-a150-5b4b98a9b587"
   }
 }
 
@@ -3219,8 +3253,8 @@ resource "aws_s3_bucket_ownership_controls" "bucket_upload" {
 
 resource "aws_s3_bucket_acl" "bucket_upload" {
   depends_on = [
-	aws_s3_bucket_public_access_block.bucket_upload,
-	aws_s3_bucket_ownership_controls.bucket_upload,
+    aws_s3_bucket_public_access_block.bucket_upload,
+    aws_s3_bucket_ownership_controls.bucket_upload,
   ]
 
   bucket = aws_s3_bucket.bucket_upload.id
@@ -3269,6 +3303,10 @@ resource "aws_s3_bucket_object" "upload_folder_prod" {
   source       = "./resources/s3/webfiles/${each.value}"
   content_type = lookup(local.content_type_map, regex("\\.(?P<extension>[A-Za-z0-9]+)$", each.value).extension, "application/octet-stream")
   depends_on   = [aws_s3_bucket.bucket_upload, null_resource.file_replacement_api_gw]
+  tags = {
+    git_repo  = "AWSGoat"
+    yor_trace = "713ec5b3-7215-4e00-8fd8-c8b0271cc8e7"
+  }
 }
 
 
@@ -3280,6 +3318,8 @@ resource "aws_s3_bucket" "dev" {
   tags = {
     Name        = "Development bucket"
     Environment = "Dev"
+    git_repo    = "AWSGoat"
+    yor_trace   = "a19080f1-fcd3-4cb5-8332-8496b0fb2de9"
   }
 }
 
@@ -3303,8 +3343,8 @@ resource "aws_s3_bucket_ownership_controls" "dev" {
 
 resource "aws_s3_bucket_acl" "dev" {
   depends_on = [
-	aws_s3_bucket_public_access_block.dev,
-	aws_s3_bucket_ownership_controls.dev,
+    aws_s3_bucket_public_access_block.dev,
+    aws_s3_bucket_ownership_controls.dev,
   ]
 
   bucket = aws_s3_bucket.dev.id
@@ -3337,6 +3377,10 @@ resource "aws_s3_bucket_object" "upload_folder_dev" {
   source       = "./resources/s3/webfiles/build/${each.value}"
   content_type = lookup(local.content_type_map, regex("\\.(?P<extension>[A-Za-z0-9]+)$", each.value).extension, "application/octet-stream")
   depends_on   = [aws_s3_bucket.dev, null_resource.file_replacement_ec2_ip]
+  tags = {
+    git_repo  = "AWSGoat"
+    yor_trace = "6d4d198d-2a34-46a4-b58f-08e9f7dded31"
+  }
 }
 resource "aws_s3_bucket_object" "upload_folder_dev_2" {
   for_each     = fileset("./resources/s3/shared/", "**")
@@ -3346,6 +3390,10 @@ resource "aws_s3_bucket_object" "upload_folder_dev_2" {
   source       = "./resources/s3/shared/${each.value}"
   content_type = lookup(local.content_type_map, regex("\\.(?P<extension>[A-Za-z0-9]+)$", each.value).extension, "application/octet-stream")
   depends_on   = [aws_s3_bucket.dev, null_resource.file_replacement_ec2_ip]
+  tags = {
+    git_repo  = "AWSGoat"
+    yor_trace = "a484b97f-d630-419a-96c7-26ebeb439655"
+  }
 }
 
 
@@ -3358,6 +3406,8 @@ resource "aws_s3_bucket" "bucket_temp" {
   tags = {
     Name        = "Temporary bucket"
     Environment = "Dev"
+    git_repo    = "AWSGoat"
+    yor_trace   = "07c59263-4928-46a5-977e-3dd267558a90"
   }
 }
 
@@ -3380,8 +3430,8 @@ resource "aws_s3_bucket_ownership_controls" "bucket_temp" {
 
 resource "aws_s3_bucket_acl" "bucket_temp" {
   depends_on = [
-	aws_s3_bucket_public_access_block.bucket_temp,
-	aws_s3_bucket_ownership_controls.bucket_temp,
+    aws_s3_bucket_public_access_block.bucket_temp,
+    aws_s3_bucket_ownership_controls.bucket_temp,
   ]
 
   bucket = aws_s3_bucket.bucket_temp.id
@@ -3397,6 +3447,10 @@ resource "aws_s3_bucket_object" "upload_temp_object" {
   source       = "./resources/s3/webfiles/build/${each.value}"
   content_type = lookup(local.content_type_map, regex("\\.(?P<extension>[A-Za-z0-9]+)$", each.value).extension, "application/octet-stream")
   depends_on   = [aws_s3_bucket.bucket_upload, null_resource.file_replacement_lambda_react]
+  tags = {
+    git_repo  = "AWSGoat"
+    yor_trace = "caa4a524-b772-4cf6-b276-4e006efd3850"
+  }
 }
 resource "aws_s3_bucket_object" "upload_temp_object_2" {
   for_each     = fileset("./resources/s3/shared/", "**")
@@ -3406,6 +3460,10 @@ resource "aws_s3_bucket_object" "upload_temp_object_2" {
   source       = "./resources/s3/shared/${each.value}"
   content_type = lookup(local.content_type_map, regex("\\.(?P<extension>[A-Za-z0-9]+)$", each.value).extension, "application/octet-stream")
   depends_on   = [aws_s3_bucket.bucket_upload, null_resource.file_replacement_lambda_react]
+  tags = {
+    git_repo  = "AWSGoat"
+    yor_trace = "5e917b16-83cc-4f1f-93b2-c780499c1d20"
+  }
 }
 
 /* Creating a S3 Bucket for Terraform state file upload. */
@@ -3415,6 +3473,8 @@ resource "aws_s3_bucket" "bucket_tf_files" {
   tags = {
     Name        = "Do not delete Bucket"
     Environment = "Dev"
+    git_repo    = "AWSGoat"
+    yor_trace   = "1e767a5c-5ca0-4ad4-8991-2c4f539d67d5"
   }
 }
 
@@ -3426,13 +3486,17 @@ resource "aws_vpc" "goat_vpc" {
   instance_tenancy     = "default"
   enable_dns_hostnames = true
   tags = {
-    Name = "AWS_GOAT_VPC"
+    Name      = "AWS_GOAT_VPC"
+    git_repo  = "AWSGoat"
+    yor_trace = "89379973-4e24-43b6-a9ce-92fdda900f77"
   }
 }
 resource "aws_internet_gateway" "goat_gw" {
   vpc_id = aws_vpc.goat_vpc.id
   tags = {
-    Name = "app gateway"
+    Name      = "app gateway"
+    git_repo  = "AWSGoat"
+    yor_trace = "98de6a5a-634b-4f88-aaea-d50d2f81d3b4"
   }
 }
 resource "aws_subnet" "goat_subnet" {
@@ -3441,7 +3505,9 @@ resource "aws_subnet" "goat_subnet" {
   availability_zone       = "us-east-1a"
   map_public_ip_on_launch = true
   tags = {
-    Name = "AWS_GOAT App subnet"
+    Name      = "AWS_GOAT App subnet"
+    git_repo  = "AWSGoat"
+    yor_trace = "ee281621-ba8d-407c-b619-4aed5adf98ff"
   }
 }
 
@@ -3450,6 +3516,10 @@ resource "aws_route_table" "goat_rt" {
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.goat_gw.id
+  }
+  tags = {
+    git_repo  = "AWSGoat"
+    yor_trace = "caa5e6e1-8009-4ba6-a6cc-750b38cc2c7d"
   }
 }
 resource "aws_route_table_association" "goat_public_rta" {
@@ -3475,7 +3545,9 @@ resource "aws_security_group" "goat_sg" {
   }
 
   tags = {
-    Name = "AWS_GOAT_sg"
+    Name      = "AWS_GOAT_sg"
+    git_repo  = "AWSGoat"
+    yor_trace = "f58a64be-4cc6-4c47-a443-d30a1da95f29"
   }
 }
 
@@ -3484,6 +3556,10 @@ resource "aws_security_group" "goat_sg" {
 resource "aws_iam_instance_profile" "goat_iam_profile" {
   name = "AWS_GOAT_ec2_profile"
   role = aws_iam_role.goat_role.name
+  tags = {
+    git_repo  = "AWSGoat"
+    yor_trace = "8b63316b-87c6-4d25-bec8-18d3b7877d58"
+  }
 }
 resource "aws_iam_role" "goat_role" {
   name               = "AWS_GOAT_ROLE"
@@ -3503,6 +3579,10 @@ resource "aws_iam_role" "goat_role" {
     ]
 }
 EOF
+  tags = {
+    git_repo  = "AWSGoat"
+    yor_trace = "cfda80ab-7dcf-4357-bf28-95e8cdb5c5cf"
+  }
 }
 resource "aws_iam_role_policy_attachment" "goat_s3_policy" {
   role       = aws_iam_role.goat_role.name
@@ -3565,6 +3645,10 @@ resource "aws_iam_policy" "goat_inline_policy_2" {
     ],
     "Version" : "2012-10-17"
   })
+  tags = {
+    git_repo  = "AWSGoat"
+    yor_trace = "50b1f3a8-069b-4485-b4f9-7026c52e538e"
+  }
 }
 
 data "template_file" "goat_script" {
@@ -3596,7 +3680,9 @@ resource "aws_instance" "goat_instance" {
   subnet_id            = aws_subnet.goat_subnet.id
   security_groups      = [aws_security_group.goat_sg.id]
   tags = {
-    Name = "AWS_GOAT_DEV_INSTANCE"
+    Name      = "AWS_GOAT_DEV_INSTANCE"
+    git_repo  = "AWSGoat"
+    yor_trace = "89e8b1b8-db10-45ec-88c4-b3393949bee6"
   }
   user_data = data.template_file.goat_script.rendered
   depends_on = [
@@ -3616,6 +3702,10 @@ resource "aws_dynamodb_table" "users_table" {
     name = "email"
     type = "S"
   }
+  tags = {
+    git_repo  = "AWSGoat"
+    yor_trace = "a0e7c2e9-49fa-4e92-8a71-97cc48bc6f13"
+  }
 }
 resource "aws_dynamodb_table" "posts_table" {
   name           = "blog-posts"
@@ -3627,6 +3717,10 @@ resource "aws_dynamodb_table" "posts_table" {
   attribute {
     name = "id"
     type = "S"
+  }
+  tags = {
+    git_repo  = "AWSGoat"
+    yor_trace = "91330c50-b74c-4d22-b5c7-f08c3a229425"
   }
 }
 
